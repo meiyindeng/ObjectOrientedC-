@@ -17,12 +17,20 @@ using std::endl;
 // Solves the Tower of Hanoi puzzle.
 // (Feel free to call "helper functions" to help you solve the puzzle.)
 void Game::solve() {
-    // Prints out the state of the game:
+    // Prints out the state the game:
+    Stack& first = stacks_[0];
+    Stack& second = stacks_[1];
+    Stack& third = stacks_[2];
+    if(isEmptyStack(second)){
+        Cube top = first.removeTop();
+        second.push_back(top);
+    }
 
     cout << *this << endl;
 
     // @TODO -- Finish solving the game!
 }
+
 
 
 
@@ -47,6 +55,17 @@ Game::Game() {
     Cube yellow(1, uiuc::HSLAPixel::YELLOW);
     stacks_[0].push_back(yellow);
 }
+
+bool Game::isEmptyStack(Stack stack) {
+    return stack.size()==0;
+}
+
+bool Game::isSmallCube(Cube &a, Cube &b) {
+    return a.getLength() < b.getLength();
+}
+
+
+
 
 std::ostream& operator<<(std::ostream & os, const Game & game) {
     for (unsigned i = 0; i < game.stacks_.size(); i++) {
