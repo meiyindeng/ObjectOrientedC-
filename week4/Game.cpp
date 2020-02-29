@@ -21,9 +21,26 @@ void Game::solve() {
     Stack& first = stacks_[0];
     Stack& second = stacks_[1];
     Stack& third = stacks_[2];
-    if(isEmptyStack(second)){
-        Cube top = first.removeTop();
-        second.push_back(top);
+    while(third.size()!=4){
+        if(isEmptyStack(third)) {
+            Cube top = first.removeTop();
+            third.push_back(top);
+        }
+        if(isEmptyStack(second)){
+            Cube top = first.removeTop();
+            second.push_back(top);
+        }
+        Cube stack1cube = first.peekTop();
+        Cube stack2cube = second.peekTop();
+        Cube stack3cube = third.peekTop();
+        if (stack2cube.getLength() < stack3cube.getLength()) {
+            third.push_back(second.removeTop());
+        }
+        else{
+            int stack2size = stack1cube.getLength()-1;
+        }
+
+
     }
 
     cout << *this << endl;
