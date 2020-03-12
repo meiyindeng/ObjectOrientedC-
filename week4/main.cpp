@@ -5,41 +5,32 @@
  *   Wade Fagen-Ulmschneider <waf@illinois.edu>
  */
 
-//#include "Game.h"
+#include "Game.h"
+#include "Instruction.h"
 #include <iostream>
 #include <vector>
+#include <tuple>
+#include <queue>
 
-std::vector<int> CalculateMoveSequence(int n){
-    std::vector<int> moveSequence;
-    if(n<=0){
-        return moveSequence;
-    }
-    if(n==1){
 
-        moveSequence.push_back(n);
 
-        return moveSequence;
-    }
-    else{
-        std::vector<int> prevSequence = CalculateMoveSequence(n-1);
 
-        for(auto& x :prevSequence){
-            moveSequence.push_back(x);
-        }
-
-        moveSequence.push_back(n);
-
-        for(auto& x :prevSequence){
-            moveSequence.push_back(x);
-        }
-
-        return moveSequence;
+/*void PrintInstruction (std::vector<std::tuple<char, char, char>> listOfTuple){
+    for (int i = 0; i < listOfTuple.size(); i++){
+        std::cout << std::get<0>(listOfTuple[i]) << ", " <<  std::get<1>(listOfTuple[i]) << ", " <<
+        std::get<2>(listOfTuple[i]) << std::endl;
     }
 }
+*/
+
+
+
+
 
 
 int main() {
-    /*Game g;
+
+    Game g;
 
     std::cout << "Initial game state: " << std::endl;
     std::cout << g << std::endl;
@@ -47,11 +38,7 @@ int main() {
     g.solve();
 
     std::cout << "Final game state: " << std::endl;
-    std::cout << g << std::endl;*/
-    std::vector<int> sequence = CalculateMoveSequence(3);
-    for (int i = 0; i < sequence.size(); i++){
-        std::cout << sequence[i] << ", ";
-    }
+    std::cout << g << std::endl;
 
 
 

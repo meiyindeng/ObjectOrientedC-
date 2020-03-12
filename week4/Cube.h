@@ -20,6 +20,7 @@ namespace uiuc {
         double getVolume() const;
         double getSurfaceArea() const;
 
+
     private:
         double length_;
         HSLAPixel color_;

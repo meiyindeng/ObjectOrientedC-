@@ -9,41 +9,69 @@
 #include "Stack.h"
 #include "Cube.h"
 #include "HSLAPixel.h"
-
+#include <vector>
 #include <iostream>
+
 using std::cout;
 using std::endl;
 
+
+
 // Solves the Tower of Hanoi puzzle.
 // (Feel free to call "helper functions" to help you solve the puzzle.)
-void Game::solve() {
-    // Prints out the state the game:
-    Stack& first = stacks_[0];
-    Stack& second = stacks_[1];
-    Stack& third = stacks_[2];
-    while(third.size()!=4){
-        if(isEmptyStack(third)) {
-            Cube top = first.removeTop();
-            third.push_back(top);
-        }
-        if(isEmptyStack(second)){
-            Cube top = first.removeTop();
-            second.push_back(top);
-        }
-        Cube stack1cube = first.peekTop();
-        Cube stack2cube = second.peekTop();
-        Cube stack3cube = third.peekTop();
-        if (stack2cube.getLength() < stack3cube.getLength()) {
-            third.push_back(second.removeTop());
-        }
-        else{
-            int stack2size = stack1cube.getLength()-1;
-        }
+std::vector<std::tuple<char, char, char>> Game::instruction (int diskQuantity){
+    std::vector<std::tuple<char, char, char>> listOfTuple;
+
+    Instruction one('A', 'B', 'C');
+    listOfTuple.push_back(one.originalTuple);
 
 
+    while(diskQuantity != 1) {
+
+        std::queue<std::tuple<char, char, char>> queueOfTuple;
+        for (int index = 0; index < listOfTuple.size(); index++) {
+
+            if ((index % 2) == 0) {
+                Instruction two = listOfTuple[index];
+                std::tuple<char, char, char> newTuple = two.RearrangeTuple();
+                std::tuple<char, char, char> newTuple2 = two.RearrangeTuple2();
+                std::tuple<char, char, char> newTuple3 = two.RearrangeTuple3();
+                queueOfTuple.push(newTuple);
+                queueOfTuple.push(newTuple2);
+                queueOfTuple.push(newTuple3);
+            }
+
+            if (index % 2 != 0) {
+                queueOfTuple.push(listOfTuple[index]);
+            }
+
+        }
+        listOfTuple.resize(queueOfTuple.size());
+        for (int i = 0; i < listOfTuple.size(); i++) {
+
+            listOfTuple[i] = queueOfTuple.front();
+            queueOfTuple.pop();
+        }
+
+        diskQuantity--;
     }
 
-    cout << *this << endl;
+    return listOfTuple;
+}
+
+
+void Game::solve() {
+    // Prints out the state the game:
+    std::vector<std::tuple<char, char, char>> moveInstruction = instruction(4);
+    for (int moveNumber = 0; moveNumber < moveInstruction.size(); moveNumber++){
+        int instruction1 = DecodeInstruction(std::get<0> (moveInstruction[moveNumber]));
+        int instruction2 = DecodeInstruction(std::get<1> (moveInstruction[moveNumber]));
+        Stack& fromPeg = pegs_[instruction1];
+        Stack& toPeg = pegs_[instruction2];
+        Cube movingDisk = fromPeg.removeTop();
+        toPeg.push_back(movingDisk);
+        cout << *this << endl;
+    }
 
     // @TODO -- Finish solving the game!
 }
@@ -56,37 +84,50 @@ Game::Game() {
     // Create the three empty stacks:
     for (int i = 0; i < 3; i++) {
         Stack stackOfCubes;
-        stacks_.push_back( stackOfCubes );
+        pegs_.push_back( stackOfCubes );
     }
 
     // Create the four cubes, placing each on the [0]th stack:
     Cube blue(4, uiuc::HSLAPixel::BLUE);
-    stacks_[0].push_back(blue);
+    pegs_[0].push_back(blue);
 
     Cube orange(3, uiuc::HSLAPixel::ORANGE);
-    stacks_[0].push_back(orange);
+    pegs_[0].push_back(orange);
 
     Cube purple(2, uiuc::HSLAPixel::PURPLE);
-    stacks_[0].push_back(purple);
+    pegs_[0].push_back(purple);
 
     Cube yellow(1, uiuc::HSLAPixel::YELLOW);
-    stacks_[0].push_back(yellow);
+    pegs_[0].push_back(yellow);
 }
-
-bool Game::isEmptyStack(Stack stack) {
-    return stack.size()==0;
-}
-
-bool Game::isSmallCube(Cube &a, Cube &b) {
-    return a.getLength() < b.getLength();
-}
-
 
 
 
 std::ostream& operator<<(std::ostream & os, const Game & game) {
-    for (unsigned i = 0; i < game.stacks_.size(); i++) {
-        os << "Stack[" << i << "]: " << game.stacks_[i];
+    for (unsigned i = 0; i < game.pegs_.size(); i++) {
+        os << "Stack[" << i << "]: " << game.pegs_[i];
     }
     return os;
 }
+
+int Game::DecodeInstruction(char pegName) {
+    int pegID = 0;
+    switch(pegName){
+        case 'A':
+            pegID = 0;
+            break;
+        case 'B':
+            pegID = 1;
+            break;
+        case 'C':
+            pegID = 2;
+            break;
+    }
+    return pegID;
+}
+
+
+
+
+
+
